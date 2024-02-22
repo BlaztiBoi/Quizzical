@@ -176,7 +176,7 @@ function App() {
               Check Answers
             </button>
           )}
-          {quizData.length <= 0 && <><h2>Sorry , api doesn't have questions based on your spefic options , try something else</h2>
+          {dataLoaded && quizData.length <= 0 && <><h2>Sorry , api doesn't have questions based on your spefic options , try something else</h2>
           <button className="btn-secondary" onClick={resetGame}>
                 Try Again
               </button>
