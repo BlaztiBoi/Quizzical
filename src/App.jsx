@@ -171,16 +171,23 @@ function App() {
       {gameStart && (
         <div className="quizs-container">
           {quizData.map((quiz) => renderQuiz(quiz))}
-          {dataLoaded && !gameFinished && (
+          {dataLoaded && !gameFinished && quizData.length > 0 && (
             <button className="btn-secondary" onClick={checkAnswerBtnClicked}>
               Check Answers
             </button>
           )}
+          {quizData.length <= 0 && <><h2>Sorry , api doesn't have questions based on your spefic options , try something else</h2>
+          <button className="btn-secondary" onClick={resetGame}>
+                Try Again
+              </button>
+          </>
+          
+          }
           {gameFinished && (
             <div className="result-container">
               <h3>
                 You scored {score}/{quizData.length} correct answers
-              </h3>{" "}
+              </h3>
               <button className="btn-secondary" onClick={resetGame}>
                 Play Again
               </button>
