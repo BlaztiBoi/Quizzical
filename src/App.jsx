@@ -1,9 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { decode } from "html-entities";
 
 import "./App.css";
 import MainMenu from "./Components/MainMenu";
-import { testdata } from "./testdata";
+
 import { nanoid } from "nanoid";
 import Loading from "./Components/Loading";
 
@@ -187,7 +189,7 @@ function App() {
         </div>
       )}
       {!gameStart && (
-        <div className="footer">Made by Blazt ( Design from scimba )</div>
+        <div className="footer">Developed by Blazt ( Design from scimba )</div>
       )}
     </main>
   );
