@@ -176,3 +176,16 @@ body {
     width: 100%;
     margin: auto;
 }
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #D6DBF5;
+    color: #293264;
+    text-align: center;
+    padding: 10px;
+    font-size: small;
+    font-weight: bold;
+}

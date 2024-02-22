@@ -5,12 +5,12 @@ import "./App.css";
 import MainMenu from "./Components/MainMenu";
 import { testdata } from "./testdata";
 import { nanoid } from "nanoid";
-import Loading from "./Components/Loading"
+import Loading from "./Components/Loading";
 
 function App() {
-  const [options,setOptions] = useState({})
+  const [options, setOptions] = useState({});
   const [gameStart, setGameStart] = useState(false);
-  const [dataLoaded,setDataLoaded] = useState(false)
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [rawQuizData, setRawQuizData] = useState([]);
   const [quizData, setQuizData] = useState([]);
   const [gameFinished, setGameFinished] = useState(false);
@@ -23,55 +23,63 @@ function App() {
       }
       return array;
     }
-    if(gameStart === true){
+    if (gameStart === true) {
       const test = {
-        "amount": "12",
-        "category": "10",
-        "difficulty": "medium",
-        "type": "any"
-    }
-      const questionAmount = options.amount
-      const questionCategory = options.category === "any" ? "" : `&category=${options.category}`
-      const questionDifficulty = options.difficulty === "any" ? "" :  `&difficulty=${options.difficulty}`
-      const questionType = options.type === "any" ? "" : `&type=${options.type}`
+        amount: "12",
+        category: "10",
+        difficulty: "medium",
+        type: "any",
+      };
+      const questionAmount = options.amount;
+      const questionCategory =
+        options.category === "any" ? "" : `&category=${options.category}`;
+      const questionDifficulty =
+        options.difficulty === "any" ? "" : `&difficulty=${options.difficulty}`;
+      const questionType =
+        options.type === "any" ? "" : `&type=${options.type}`;
 
-      const fetchLink = `https://opentdb.com/api.php?amount=${questionAmount}${questionCategory}${questionDifficulty}${questionType}`
+      const fetchLink = `https://opentdb.com/api.php?amount=${questionAmount}${questionCategory}${questionDifficulty}${questionType}`;
 
       fetch(fetchLink)
-      .then(response => response.json())
-      .then(data => {
-        setDataLoaded(true)
-        const quizz = data.results.map((quiz) => {
-          let answers = quiz.type === "boolean" ? ["True","False"] : [quiz.correct_answer, ...quiz.incorrect_answers];
-          quiz.answers = quiz.type !== "boolean" ? shuffleArray(answers) : answers;
-          quiz.id = nanoid();
-          quiz.question;
-          return quiz;
-        });
-        const renderedQuiz = quizz.map((quiz) => {
-          
-          const q = { id: quiz.id, answers: [], question: quiz.question};
-          quiz.answers.map((answ) => {
-            const correctAns = answ === quiz.correct_answer ? true : false;
-            q.answers.push({ answer: answ, isHeld: false , correct: correctAns});
+        .then((response) => response.json())
+        .then((data) => {
+          setDataLoaded(true);
+          const quizz = data.results.map((quiz) => {
+            let answers =
+              quiz.type === "boolean"
+                ? ["True", "False"]
+                : [quiz.correct_answer, ...quiz.incorrect_answers];
+            quiz.answers =
+              quiz.type !== "boolean" ? shuffleArray(answers) : answers;
+            quiz.id = nanoid();
+            quiz.question;
+            return quiz;
           });
-          return q;
+          const renderedQuiz = quizz.map((quiz) => {
+            const q = { id: quiz.id, answers: [], question: quiz.question };
+            quiz.answers.map((answ) => {
+              const correctAns = answ === quiz.correct_answer ? true : false;
+              q.answers.push({
+                answer: answ,
+                isHeld: false,
+                correct: correctAns,
+              });
+            });
+            return q;
+          });
+          setRawQuizData(quizz);
+          setQuizData(renderedQuiz);
         });
-        setRawQuizData(quizz);
-        setQuizData(renderedQuiz);
-      })
-      
     }
-
   }, [gameStart]);
 
   function startGame(formData) {
-    setGameStart(true)
+    setGameStart(true);
     setOptions(formData);
   }
   function renderQuiz(quiz) {
     const { question, answers, id } = quiz;
-    if(!gameFinished){
+    if (!gameFinished) {
       return (
         <div key={quiz.id} id={quiz.id} className="quiz-container">
           <h4>{decode(question)}</h4>
@@ -87,25 +95,31 @@ function App() {
           <hr></hr>
         </div>
       );
-    }else return (
-      <div key={quiz.id} id={quiz.id} className="quiz-container">
-      <h4>{decode(question)}</h4>
-      {answers.map((Ans, i) => (
-        <button
-          key={i}
-          className={Ans.correct === true && Ans.isHeld === true ? "correct" :
-           Ans.correct === true && Ans.isHeld === false ? "correct":
-           Ans.correct === false && Ans.isHeld ? "incorrect" :
-           Ans.correct === false && Ans.isHeld=== false ? "neutral" : "neutral"
-          }
-        >
-          {decode(Ans.answer)}
-        </button>
-      ))}
-      <hr></hr>
-    </div>
-    )
-   
+    } else
+      return (
+        <div key={quiz.id} id={quiz.id} className="quiz-container">
+          <h4>{decode(question)}</h4>
+          {answers.map((Ans, i) => (
+            <button
+              key={i}
+              className={
+                Ans.correct === true && Ans.isHeld === true
+                  ? "correct"
+                  : Ans.correct === true && Ans.isHeld === false
+                  ? "correct"
+                  : Ans.correct === false && Ans.isHeld
+                  ? "incorrect"
+                  : Ans.correct === false && Ans.isHeld === false
+                  ? "neutral"
+                  : "neutral"
+              }
+            >
+              {decode(Ans.answer)}
+            </button>
+          ))}
+          <hr></hr>
+        </div>
+      );
   }
 
   function answerBtnClicked(btnData) {
@@ -124,37 +138,57 @@ function App() {
     setQuizData(newQuizData);
   }
   function checkAnswerBtnClicked() {
-    setGameFinished(true)
-    quizData.forEach((quiz)=>{
-      quiz.answers.forEach((answer) => answer.isHeld && answer.correct ? setScore(prevScore => prevScore+1) : "")
-    })
+    setGameFinished(true);
+    quizData.forEach((quiz) => {
+      quiz.answers.forEach((answer) =>
+        answer.isHeld && answer.correct
+          ? setScore((prevScore) => prevScore + 1)
+          : ""
+      );
+    });
   }
 
-  function resetGame(){
-    setGameStart(false)
-    setQuizData(false)
-    setRawQuizData([])
-    setQuizData([])
-    setGameFinished(false)
-    setScore(0)
-    setDataLoaded(false)
-
+  function resetGame() {
+    setGameStart(false);
+    setQuizData(false);
+    setRawQuizData([]);
+    setQuizData([]);
+    setGameFinished(false);
+    setScore(0);
+    setDataLoaded(false);
   }
 
   return (
     <main>
-     
-      {!gameStart && <MainMenu startGame={startGame}/>}
-      {!dataLoaded && gameStart &&   <div className="loading"><Loading/></div>}
-      {
-        gameStart &&
+      {!gameStart && <MainMenu startGame={startGame} />}
+      {!dataLoaded && gameStart && (
+        <div className="loading">
+          <Loading />
+        </div>
+      )}
+      {gameStart && (
         <div className="quizs-container">
-        {quizData.map((quiz) => renderQuiz(quiz))}
-        {dataLoaded &&!gameFinished && <button className="btn-secondary" onClick={checkAnswerBtnClicked}>Check Answers</button>}
-        { gameFinished && <div className="result-container"><h3>You scored {score}/{quizData.length} correct answers</h3> <button className="btn-secondary" onClick={resetGame}>Play Again</button></div>}
-      </div>
-      }
-      
+          {quizData.map((quiz) => renderQuiz(quiz))}
+          {dataLoaded && !gameFinished && (
+            <button className="btn-secondary" onClick={checkAnswerBtnClicked}>
+              Check Answers
+            </button>
+          )}
+          {gameFinished && (
+            <div className="result-container">
+              <h3>
+                You scored {score}/{quizData.length} correct answers
+              </h3>{" "}
+              <button className="btn-secondary" onClick={resetGame}>
+                Play Again
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {!gameStart && (
+        <div className="footer">Made by Blazt ( Design from scimba )</div>
+      )}
     </main>
   );
 }
